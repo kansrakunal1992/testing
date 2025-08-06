@@ -1,0 +1,11 @@
+{
+  "name": "stt-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "google-auth-library": "^9.0.0"
+  }
+}
