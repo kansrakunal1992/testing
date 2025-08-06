@@ -17,12 +17,6 @@ const { GoogleAuth } = require('google-auth-library');
       throw new Error(`Base64 decoding failed: ${decodeErr.message}`);
     }
     
-    // Validate decoded key looks like JSON
-    if (!decodedKey.startsWith('{') || !decodedKey.endsWith('}')) {
-      console.error('Decoded key preview (first 200 chars):', decodedKey.substring(0, 200));
-      throw new Error('Decoded key is not valid JSON format');
-    }
-    
     // Parse the JSON
     let credentials;
     try {
@@ -45,8 +39,9 @@ const { GoogleAuth } = require('google-auth-library');
       languageCode: 'en-US'
     };
     
+    // Use a sample audio file from Google Cloud Storage
     const audio = {
-      content: '' // Empty base64 string for test
+      uri: "gs://cloud-samples-tests/speech/brooklyn.flac"
     };
     
     const { data } = await client.request({
@@ -58,15 +53,8 @@ const { GoogleAuth } = require('google-auth-library');
     console.log('✅ STT API responded:', data);
   } catch (err) {
     console.error('❌ STT test failed:', err.message);
-    
-    // Additional debugging for Base64 issues
-    if (err.message.includes('Base64 decoding failed') || 
-        err.message.includes('JSON parsing failed') ||
-        err.message.includes('not valid JSON')) {
-      console.error('🔍 Debugging info:');
-      console.error('- Check that GCP_BASE64_KEY is set correctly in Railway');
-      console.error('- Verify the entire Base64 string was copied without truncation');
-      console.error('- Ensure no extra characters were added during copy/paste');
+    if (err.response) {
+      console.error('API Error Details:', err.response.data);
     }
   }
 })();
